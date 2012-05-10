@@ -18,13 +18,13 @@ import org.apache.log4j.Logger;
 
 public class SlideMutationHandler implements MutationHandler {
 
-	public int MUTATION_RATE;
+	public float MUTATION_RATE;
 
 	private static Logger log = Logger.getLogger(SlideMutationHandler.class);
 
 	private static final Random rand = new Random();
 
-	public SlideMutationHandler(int mutationRate) {
+	public SlideMutationHandler(float mutationRate) {
 		MUTATION_RATE = mutationRate;
 	}
 
@@ -79,7 +79,8 @@ public class SlideMutationHandler implements MutationHandler {
 			slideChrom.moves.set(pos, el2);
 			break;
 		}
-		log.debug("Mutated successfully in " + slideChrom);
+		if (log.isEnabledFor(Level.DEBUG))
+			log.debug("Mutated successfully in " + slideChrom);
 
 	}
 

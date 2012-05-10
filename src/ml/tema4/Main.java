@@ -7,6 +7,11 @@
  */
 package ml.tema4;
 
+import ml.tema4.ga.CrossoverHandler;
+import ml.tema4.ga.GeneticAlgorithm;
+import ml.tema4.ga.GeneticAlgorithm.Status;
+import ml.tema4.ga.MutationHandler;
+
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -34,6 +39,13 @@ public class Main {
 
 		Board board = new Board();
 		board.initRandom();
+		
+		MutationHandler mh=new SlideMutationHandler(0.6f);
+		CrossoverHandler ch=new SimpleCrossoverHandler(0.2f);
+		GeneticAlgorithm algorithm=new SlidePuzzleGA(null, mh, ch, board);
+		Status status=algorithm.run();
+		log.info("Algorithm finished with status: "+status);
+			
 
 		// Testing
 		// board.doStep(Step.Up);

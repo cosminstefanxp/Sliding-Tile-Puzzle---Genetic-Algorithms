@@ -77,6 +77,6 @@ public class MoveElement {
 	 */
 	@Override
 	public String toString() {
-		return "MoveElem [" + Arrays.toString(steps) + "]";
+		return "MoveElem " + Arrays.toString(steps) + "";
 	}
 }

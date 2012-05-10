@@ -7,7 +7,7 @@
  */
 package ml.tema4;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import ml.tema4.ga.Chromosome;
 
@@ -17,7 +17,7 @@ import ml.tema4.ga.Chromosome;
 public class SlideChromosome extends Chromosome {
 
 	/** The moves. */
-	public LinkedList<MoveElement> moves;
+	public ArrayList<MoveElement> moves;
 	
 	
 	/** The board. */
@@ -36,7 +36,7 @@ public class SlideChromosome extends Chromosome {
 	 */
 	public SlideChromosome() {
 		super();
-		this.moves=new LinkedList<MoveElement>();
+		this.moves=new ArrayList<MoveElement>();
 		this.board=null;
 	}
 
@@ -48,7 +48,7 @@ public class SlideChromosome extends Chromosome {
 	public SlideChromosome(Board board) {
 		super();
 		this.board = board;
-		this.moves=new LinkedList<MoveElement>();
+		this.moves=new ArrayList<MoveElement>();
 	}
 
 	/* (non-Javadoc)
@@ -59,7 +59,7 @@ public class SlideChromosome extends Chromosome {
 		
 		SlideChromosome chrom=new SlideChromosome(this.board);
 		for(MoveElement el:this.moves)
-			chrom.moves.push(el);
+			chrom.moves.add(el);
 				
 		return chrom;
 	}
@@ -69,7 +69,7 @@ public class SlideChromosome extends Chromosome {
 	 */
 	@Override
 	public String toString() {
-		return "SlideChromosome [moves=" + moves + "]";
+		return "SlideChrom [" + moves + "]";
 	}
 
 }

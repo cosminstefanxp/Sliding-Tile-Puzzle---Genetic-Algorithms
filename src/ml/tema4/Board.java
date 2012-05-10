@@ -110,9 +110,9 @@ public class Board {
 		for (int i = 0; i < BOARD_SIZE; i++) {
 			for (int j = 0; j < BOARD_SIZE; j++)
 				if (board[i][j] > 0)
-					buf.append(String.format("%2d ", board[i][j]));
+					buf.append(String.format("%2d  ", board[i][j]));
 				else
-					buf.append("   ");
+					buf.append("    ");
 			buf.append("\n");
 		}
 		return buf.toString();
