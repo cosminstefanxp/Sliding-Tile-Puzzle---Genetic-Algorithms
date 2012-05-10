@@ -8,6 +8,7 @@
 package ml.tema4;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * The Class MoveElement that contains possible step combinations, including macros.
@@ -69,5 +70,13 @@ public class MoveElement {
 		}
 
 		return allMoves;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "MoveElem [" + Arrays.toString(steps) + "]";
 	}
 }

@@ -19,6 +19,7 @@ public class SlideChromosome extends Chromosome {
 	/** The moves. */
 	public LinkedList<MoveElement> moves;
 	
+	
 	/** The board. */
 	public Board board;
 
@@ -61,6 +62,14 @@ public class SlideChromosome extends Chromosome {
 			chrom.moves.push(el);
 				
 		return chrom;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "SlideChromosome [moves=" + moves + "]";
 	}
 
 }
