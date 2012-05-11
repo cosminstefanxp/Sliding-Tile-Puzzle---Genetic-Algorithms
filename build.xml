@@ -36,7 +36,7 @@
         </javac>
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
-    <target name="run">
+    <target depends="build" name="run">
         <java classname="ml.tema4.Main" failonerror="true" fork="yes">
             <classpath refid="IA - Tema 4.classpath"/>
         </java>

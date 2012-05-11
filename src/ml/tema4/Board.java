@@ -18,10 +18,13 @@ import org.apache.log4j.Logger;
 public class Board {
 
 	/** The Constant BOARD_SIZE. */
-	public static final int BOARD_SIZE = 4;
+	public static final int BOARD_WIDTH = Config.BOARD_WIDTH;
+	
+	/** The Constant BOARD_HEIGHT. */
+	public static final int BOARD_HEIGHT = Config.BOARD_HEIGHT;
 
 	/** The Constant BOARD_MAX_ELEMENT. */
-	public static final int BOARD_MAX_ELEMENT = BOARD_SIZE * BOARD_SIZE;
+	public static final int BOARD_MAX_ELEMENT = BOARD_HEIGHT * BOARD_WIDTH;
 
 	/** The Constant rand. */
 	public static final Random rand = new Random();
@@ -37,7 +40,7 @@ public class Board {
 	 */
 	public Board() {
 		super();
-		board = new int[BOARD_SIZE][BOARD_SIZE];
+		board = new int[BOARD_HEIGHT][BOARD_WIDTH];
 	}
 
 	/**
@@ -49,8 +52,8 @@ public class Board {
 		BitSet used = new BitSet(BOARD_MAX_ELEMENT);
 
 		for (int pos = 0; pos < BOARD_MAX_ELEMENT - 1; pos++) {
-			int l = pos / BOARD_SIZE;
-			int c = pos % BOARD_SIZE;
+			int l = pos / BOARD_WIDTH;
+			int c = pos % BOARD_WIDTH;
 
 			// Get a free number
 			int val = rand.nextInt(BOARD_MAX_ELEMENT - 1) + 1;
@@ -63,7 +66,7 @@ public class Board {
 
 		}
 
-		board[BOARD_SIZE - 1][BOARD_SIZE - 1] = 0;
+		board[BOARD_HEIGHT - 1][BOARD_WIDTH - 1] = 0;
 		log.debug("Generated board: \n" + this.toString());
 
 		if (!isValid()) {
@@ -80,16 +83,16 @@ public class Board {
 	public boolean isValid() {
 		int inversions = 0;
 
-		for (int i = 0; i < BOARD_SIZE; i++)
-			for (int j = 0; j < BOARD_SIZE; j++) {
+		for (int i = 0; i < BOARD_HEIGHT; i++)
+			for (int j = 0; j < BOARD_WIDTH; j++) {
 				// Check end of line
-				for (int j1 = j + 1; j1 < BOARD_SIZE; j1++)
+				for (int j1 = j + 1; j1 < BOARD_WIDTH; j1++)
 					if (board[i][j] > board[i][j1] && board[i][j1] != 0)
 						inversions++;
 
 				// Check next lines
-				for (int i1 = i + 1; i1 < BOARD_SIZE; i1++)
-					for (int j1 = 0; j1 < BOARD_SIZE; j1++)
+				for (int i1 = i + 1; i1 < BOARD_HEIGHT; i1++)
+					for (int j1 = 0; j1 < BOARD_WIDTH; j1++)
 						if (board[i][j] > board[i1][j1] && board[i1][j1] != 0)
 							inversions++;
 			}
@@ -107,8 +110,8 @@ public class Board {
 	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer("\n");
-		for (int i = 0; i < BOARD_SIZE; i++) {
-			for (int j = 0; j < BOARD_SIZE; j++)
+		for (int i = 0; i < BOARD_HEIGHT; i++) {
+			for (int j = 0; j < BOARD_WIDTH; j++)
 				if (board[i][j] > 0)
 					buf.append(String.format("%2d  ", board[i][j]));
 				else
@@ -128,8 +131,8 @@ public class Board {
 		// Find the empty tile
 		int xPos = -1, yPos = -1;
 		boolean done = false;
-		for (xPos = 0; xPos < BOARD_SIZE; xPos++) {
-			for (yPos = 0; yPos < BOARD_SIZE; yPos++)
+		for (xPos = 0; xPos < BOARD_HEIGHT; xPos++) {
+			for (yPos = 0; yPos < BOARD_WIDTH; yPos++)
 				if (board[xPos][yPos] == 0) {
 					done = true;
 					break;
@@ -148,7 +151,7 @@ public class Board {
 			}
 			break;
 		case Down:
-			if (xPos < BOARD_SIZE - 1) {
+			if (xPos < BOARD_HEIGHT - 1) {
 				board[xPos][yPos] = board[xPos + 1][yPos];
 				board[xPos + 1][yPos] = 0;
 			}
@@ -160,7 +163,7 @@ public class Board {
 			}
 			break;
 		case Right:
-			if (yPos < BOARD_SIZE - 1) {
+			if (yPos < BOARD_WIDTH - 1) {
 				board[xPos][yPos] = board[xPos][yPos + 1];
 				board[xPos][yPos + 1] = 0;
 			}
@@ -191,8 +194,8 @@ public class Board {
 	{
 		Board board=new Board();
 		
-		for(int i=0;i<BOARD_SIZE;i++)
-			for(int j=0;j<BOARD_SIZE;j++)
+		for(int i=0;i<BOARD_HEIGHT;i++)
+			for(int j=0;j<BOARD_WIDTH;j++)
 				board.board[i][j]=this.board[i][j];
 		
 		return board;

@@ -10,7 +10,7 @@ package ml.tema4.ga;
 /**
  * The Class Chromosome.
  */
-public abstract class Chromosome {
+public abstract class Chromosome implements Comparable<Chromosome>{
 
 	/** The fitness. */
 	protected float fitness;

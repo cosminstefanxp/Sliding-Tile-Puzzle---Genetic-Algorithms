@@ -22,7 +22,7 @@ import ml.tema4.ga.SelectionHandler;
 public class SlidePuzzleGA extends GeneticAlgorithm {
 
 	/** The Constant MAX_ITERATION_COUNT. */
-	private static final int MAX_GENERATION_COUNT = 100000;
+	private static final int MAX_GENERATION_COUNT = Config.MAX_GENERATION_COUNT;
 
 	/** The board. */
 	Board board;
@@ -33,9 +33,11 @@ public class SlidePuzzleGA extends GeneticAlgorithm {
 	/** The generation. */
 	protected int generation = 0;
 
+	protected ArrayList<MoveElement> globalMoves;
+
 	/**
 	 * Instantiates a new slide puzzle genetic algorithm.
-	 *
+	 * 
 	 * @param selectionH the selection handler
 	 * @param mutationH the mutation handler
 	 * @param crossoverH the crossover handler
@@ -44,7 +46,8 @@ public class SlidePuzzleGA extends GeneticAlgorithm {
 	public SlidePuzzleGA(SelectionHandler selectionH, MutationHandler mutationH, CrossoverHandler crossoverH,
 			Board board) {
 		super(selectionH, mutationH, crossoverH);
-		this.board=board;
+		this.board = board;
+		this.globalMoves = new ArrayList<MoveElement>();
 	}
 
 	/* (non-Javadoc)
@@ -76,19 +79,19 @@ public class SlidePuzzleGA extends GeneticAlgorithm {
 	 * 
 	 * @see ml.tema4.ga.GeneticAlgorithm#stopCondition() */
 	@Override
-	protected Status stopCondition() {
+	protected Status updateStatus() {
 		// If the maximum generation count was reached
-		if (generation > MAX_GENERATION_COUNT)
-		{
+		if (generation > MAX_GENERATION_COUNT) {
 			log.warn("Timeout reached");
 			return Status.TIMEOUT;
 		}
 
 		// If any of the chromosomes is a solution (i.e. the fitness equals 0)
 		for (Chromosome chrom : population)
-			if (chrom.getFitness() == 0)
-			{
-				log.warn("Solution found in generation "+generation+": "+chrom);
+			if (chrom.getFitness() == 0) {
+				SlideChromosome sChrom=(SlideChromosome)chrom;
+				globalMoves.addAll(sChrom.moves);
+				log.warn("Solution found in generation " + generation + ": " + globalMoves);
 				return Status.SUCCESSFULL;
 			}
 
@@ -109,24 +112,39 @@ public class SlidePuzzleGA extends GeneticAlgorithm {
 	 * @see ml.tema4.ga.GeneticAlgorithm#endGenerationCallback() */
 	@Override
 	protected void endGenerationCallback() {
-		log.warn("Generation ended. Best fitness: "+this.bestFitness);
+		log.warn("Generation ended. Best fitness: " + this.bestFitness);
 	}
 
 	/* (non-Javadoc)
-	 * @see ml.tema4.ga.GeneticAlgorithm#resetEnvironment(ml.tema4.ga.Chromosome)
-	 */
+	 * 
+	 * @see ml.tema4.ga.GeneticAlgorithm#resetEnvironment(ml.tema4.ga.Chromosome) */
 	@Override
 	protected void resetEnvironment(Chromosome bestChromosome) {
-		log.warn("Resetting population based on the best chromosome: "+bestChromosome);
-		
-		//Update the board according to the moves in the best chromosome
-		SlideChromosome chrom=(SlideChromosome)bestChromosome;
-		for(MoveElement move:chrom.moves)
+		log.warn("Resetting population based on the best chromosome: " + bestChromosome);
+
+		// Update the board according to the moves in the best chromosome
+		SlideChromosome chrom = (SlideChromosome) bestChromosome;
+		for (MoveElement move : chrom.moves)
 			board.doMoveElement(move);
-		
-		population=generate(POPULATION_SIZE);
+
+		// Save the moves
+		globalMoves.addAll(chrom.moves);
+
+		// Reset the population
+		population = generate(POPULATION_SIZE);
 		for (Chromosome chromos : population)
 			chromos.updateFitness();
+	}
+
+	@Override
+	protected void algorithmCompleteCallBack(Status status) {
+		//Print the solution
+		System.out.println("A solution was found in "+generation+" generations: ");
+		StringBuffer out=new StringBuffer();
+		for(MoveElement move:globalMoves)
+			for(Step step:move.steps)
+				out.append(step+", ");
+		System.out.println(out.toString());
 	}
 
 }

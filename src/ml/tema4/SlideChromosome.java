@@ -58,10 +58,10 @@ public class SlideChromosome extends Chromosome {
 		 */
 		int misplaced = 0, firstMisplacedPos = -1, firstMisplaced = -1, blankPos=0;
 		
-		for (int i = 0; i < Board.BOARD_SIZE; i++)
-			for (int j = 0; j < Board.BOARD_SIZE; j++) {
+		for (int i = 0; i < Board.BOARD_HEIGHT; i++)
+			for (int j = 0; j < Board.BOARD_WIDTH; j++) {
 				
-				int val = i * Board.BOARD_SIZE + j + 1;
+				int val = i * Board.BOARD_WIDTH + j + 1;
 				
 				//Find the blank position
 				if (newBoard.board[i][j] == 0)
@@ -69,7 +69,7 @@ public class SlideChromosome extends Chromosome {
 					blankPos = val;
 					// If the blank position is not on it's final spot, it may be on the place of
 					// the first misplaced tile
-					if (firstMisplaced == -1 && val != Board.BOARD_SIZE * Board.BOARD_SIZE)
+					if (firstMisplaced == -1 && val != Board.BOARD_HEIGHT * Board.BOARD_WIDTH)
 						firstMisplaced = val;
 					continue;
 				}
@@ -93,10 +93,10 @@ public class SlideChromosome extends Chromosome {
 		// Use the Manhattan distance of the first misplaced element 
 		if (firstMisplaced != -1) {
 			int manhattanDiff = 0;
-			manhattanDiff += Math.abs((firstMisplaced - 1) / Board.BOARD_SIZE - (firstMisplacedPos - 1)
-					/ Board.BOARD_SIZE);
-			manhattanDiff += Math.abs((firstMisplaced - 1) % Board.BOARD_SIZE - (firstMisplacedPos - 1)
-					% Board.BOARD_SIZE);
+			manhattanDiff += Math.abs((firstMisplaced - 1) / Board.BOARD_WIDTH - (firstMisplacedPos - 1)
+					/ Board.BOARD_WIDTH);
+			manhattanDiff += Math.abs((firstMisplaced - 1) % Board.BOARD_WIDTH - (firstMisplacedPos - 1)
+					% Board.BOARD_WIDTH);
 			fitness += 18 * manhattanDiff;
 			log.debug("First Misplaced Manhattan: "+manhattanDiff);
 		}
@@ -105,10 +105,10 @@ public class SlideChromosome extends Chromosome {
 		if(firstMisplaced!=-1)
 		{
 			int manhattanDiff = 0;
-			manhattanDiff += Math.abs((firstMisplacedPos - 1) / Board.BOARD_SIZE - (blankPos - 1)
-					/ Board.BOARD_SIZE);
-			manhattanDiff += Math.abs((firstMisplacedPos - 1) % Board.BOARD_SIZE - (blankPos - 1)
-					% Board.BOARD_SIZE);
+			manhattanDiff += Math.abs((firstMisplacedPos - 1) / Board.BOARD_WIDTH - (blankPos - 1)
+					/ Board.BOARD_WIDTH);
+			manhattanDiff += Math.abs((firstMisplacedPos - 1) % Board.BOARD_WIDTH - (blankPos - 1)
+					% Board.BOARD_WIDTH);
 			fitness += manhattanDiff;
 			log.debug("First Misplaced to Blank Manhattan: "+manhattanDiff);
 		}
@@ -155,6 +155,20 @@ public class SlideChromosome extends Chromosome {
 	@Override
 	public String toString() {
 		return "SlideChrom [" + moves + "]";
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(Chromosome o) {
+		//If the fitness is lower, the element is better
+		if(this.getFitness()<o.getFitness())
+			return -1;
+		else if(this.getFitness()>o.getFitness())
+			return 1;
+		else
+			return 0;
 	}
 
 }

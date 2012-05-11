@@ -30,7 +30,7 @@ public class Main {
 		PatternLayout patternLayout = new PatternLayout("%-3r [%-5p] %c - %m%n");
 		ConsoleAppender appender = new ConsoleAppender(patternLayout);
 		Logger.getRootLogger().addAppender(appender);
-		Logger.getRootLogger().setLevel(Level.WARN);
+		Logger.getRootLogger().setLevel(Level.OFF);
 	}
 
 	public static void main(String args[]) {
@@ -41,9 +41,9 @@ public class Main {
 		Board board = new Board();
 		board.initRandom();
 		
-		MutationHandler mh=new SlideMutationHandler(0.6f);
-		CrossoverHandler ch=new SlideCrossoverHandler(0.4f);
-		SelectionHandler sh=new RouletteWheelSelectionHandler(0.5f);
+		MutationHandler mh=new SlideMutationHandler(Config.MUTATION_RATIO);
+		CrossoverHandler ch=new SlideCrossoverHandler(Config.CROSSOVER_RATIO);
+		SelectionHandler sh=new RouletteWheelSelectionHandler(Config.SELECTION_RATIO);
 		GeneticAlgorithm algorithm=new SlidePuzzleGA(sh, mh, ch, board);
 		Status status=algorithm.run();
 		log.info("Algorithm finished with status: "+status);
