@@ -21,14 +21,8 @@ import ml.tema4.ga.SelectionHandler;
  */
 public class SlidePuzzleGA extends GeneticAlgorithm {
 
-	/** The Constant MIN_CHROM_SIZE. */
-	private static final int MIN_CHROM_SIZE = 4;
-
-	/** The Constant MAX_CHROM_SIZE. */
-	private static final int MAX_CHROM_SIZE = 25;
-
 	/** The Constant MAX_ITERATION_COUNT. */
-	private static final int MAX_GENERATION_COUNT = 2000;
+	private static final int MAX_GENERATION_COUNT = 100000;
 
 	/** The board. */
 	Board board;
@@ -63,10 +57,10 @@ public class SlidePuzzleGA extends GeneticAlgorithm {
 		for (int i = 0; i < count; i++) {
 			// Create a new chromosome of variable size
 			SlideChromosome chrom = new SlideChromosome(board);
-			int size = rand.nextInt(MAX_CHROM_SIZE - MIN_CHROM_SIZE);
+			int size = rand.nextInt(SlideChromosome.MAX_CHROM_SIZE - SlideChromosome.MIN_CHROM_SIZE);
 			ArrayList<MoveElement> possibleMoves = MoveElement.getAllPossibleMoves();
 
-			for (int j = 0; j < size + MIN_CHROM_SIZE; j++)
+			for (int j = 0; j < size + SlideChromosome.MIN_CHROM_SIZE; j++)
 				chrom.moves.add(possibleMoves.get(rand.nextInt(possibleMoves.size())));
 			log.debug("Generated Chromosome: " + chrom);
 
@@ -84,12 +78,18 @@ public class SlidePuzzleGA extends GeneticAlgorithm {
 	protected Status stopCondition() {
 		// If the maximum generation count was reached
 		if (generation > MAX_GENERATION_COUNT)
+		{
+			log.warn("Timeout reached");
 			return Status.TIMEOUT;
+		}
 
 		// If any of the chromosomes is a solution (i.e. the fitness equals 0)
 		for (Chromosome chrom : population)
 			if (chrom.getFitness() == 0)
+			{
+				log.warn("Solution found in generation "+generation+": "+chrom);
 				return Status.SUCCESSFULL;
+			}
 
 		return Status.PROCESSING;
 	}
@@ -108,7 +108,7 @@ public class SlidePuzzleGA extends GeneticAlgorithm {
 	 * @see ml.tema4.ga.GeneticAlgorithm#endGenerationCallback() */
 	@Override
 	protected void endGenerationCallback() {
-
+		log.warn("Generation ended. Best fitness: "+this.bestFitness);
 	}
 
 }

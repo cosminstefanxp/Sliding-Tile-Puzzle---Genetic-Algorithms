@@ -55,6 +55,9 @@ public class SlideMutationHandler implements MutationHandler {
 		// Inserting new move element
 		case 0:
 			log.debug("Inserting new move element...");
+			// Check for size limit
+			if(slideChrom.moves.size()>=SlideChromosome.MAX_CHROM_SIZE)
+				break;
 			// Element picking
 			MoveElement el = possibleElements.get(rand.nextInt(possibleElements.size()));
 
@@ -65,6 +68,10 @@ public class SlideMutationHandler implements MutationHandler {
 		// Removing an element
 		case 1:
 			log.debug("Removing move element...");
+			// Check for size limit
+			if(slideChrom.moves.size()<=SlideChromosome.MIN_CHROM_SIZE)
+				break;
+			//Position picking
 			pos = rand.nextInt(slideChrom.moves.size());
 			slideChrom.moves.remove(pos);
 			break;

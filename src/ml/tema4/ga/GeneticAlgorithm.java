@@ -8,7 +8,12 @@
 package ml.tema4.ga;
 
 import java.util.ArrayList;
+import java.util.Random;
 
+import ml.tema4.MoveElement;
+import ml.tema4.SlideChromosome;
+
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
@@ -45,6 +50,12 @@ public abstract class GeneticAlgorithm {
 
 	/** The population. */
 	protected ArrayList<Chromosome> population;
+
+	/** The best fitness found so far. */
+	protected float bestFitness = Float.MAX_VALUE;
+
+	/** The Constant rand. */
+	private static final Random rand = new Random();
 
 	/**
 	 * Generates 'count' random chromosomes.
@@ -94,14 +105,83 @@ public abstract class GeneticAlgorithm {
 	 * @return true, if successful
 	 */
 	public Status run() {
-		this.population = generate(POPULATION_SIZE);
-		
-		for(int i=0;i<10;i++)
-		{
-			crossoverH.crossover(population.get(i), population.get(i+10));
-		}
-		
-		return Status.SUCCESSFULL;
-	}
 
+		// Generate initial population
+		this.population = generate(POPULATION_SIZE);
+		// Compute initial fitnesses
+		for (Chromosome chrom : population)
+			chrom.updateFitness();
+
+		float lastBestFitness = -1;
+		Status status = null;
+		// int generations
+		while ((status = stopCondition()) == Status.PROCESSING) {
+			this.beginGenerationCallback();
+
+			// Select subpopulation
+			ArrayList<Chromosome> subPop = selectionH.select(population);
+
+			// Create the new population
+			ArrayList<Chromosome> newPop = new ArrayList<Chromosome>();
+
+			// Compute best fitness
+			bestFitness = Float.MAX_VALUE;
+			Chromosome bestChrom = null;
+			for (Chromosome chrom : population) {
+				if (bestFitness > chrom.getFitness()) {
+					bestFitness = chrom.getFitness();
+					bestChrom = chrom;
+				}
+			}
+
+			// Introduce best chromosome in new population - elitism
+			newPop.add(bestChrom);
+			// Introduce a mutant of the first chromosome, if it's not there (if it mutated) to help
+			// with local minimums
+			bestChrom = bestChrom.getCopy();
+			mutationH.mutate(bestChrom);
+			if (!newPop.contains(bestChrom))
+				;
+			newPop.add(bestChrom);
+
+			// Add new chromosomes
+			while (newPop.size() < POPULATION_SIZE) {
+				Chromosome chrom1, chrom2;
+				chrom1 = subPop.get(rand.nextInt(subPop.size()));
+				chrom2 = subPop.get(rand.nextInt(subPop.size()));
+
+				chrom1 = chrom1.getCopy();
+				chrom2 = chrom2.getCopy();
+
+				crossoverH.crossover(chrom1, chrom2);
+
+				mutationH.mutate(chrom1);
+				mutationH.mutate(chrom2);
+
+				if (!newPop.contains(chrom1))
+					newPop.add(chrom1);
+				if (!newPop.contains(chrom2) && newPop.size() < POPULATION_SIZE)
+					newPop.add(chrom2);
+			}
+
+			// if (bestFitness == 91.0f) {
+			// SlideChromosome chrRes = (SlideChromosome) bestChrom;
+			// Logger.getRootLogger().setLevel(Level.DEBUG);
+			// // for(MoveElement move:chrRes.moves)
+			// // chrRes.board.doMoveElement(move);
+			// log.warn(chrRes.board);
+			// chrRes.updateFitness();
+			// Logger.getRootLogger().setLevel(Level.WARN);
+			//
+			// }
+
+			// Update the population
+			population = newPop;
+			for (Chromosome chrom : population)
+				chrom.updateFitness();
+			this.endGenerationCallback();
+		}
+
+		return status;
+	}
 }

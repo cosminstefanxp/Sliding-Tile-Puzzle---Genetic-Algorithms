@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 public class Board {
 
 	/** The Constant BOARD_SIZE. */
-	public static final int BOARD_SIZE = 4;
+	public static final int BOARD_SIZE = 3;
 
 	/** The Constant BOARD_MAX_ELEMENT. */
 	public static final int BOARD_MAX_ELEMENT = BOARD_SIZE * BOARD_SIZE;
@@ -137,7 +137,6 @@ public class Board {
 			if (done)
 				break;
 		}
-		log.debug("Empty square on: " + xPos + "," + yPos);
 		assert (xPos > 0 && yPos > 0);
 
 		// Perform the step
@@ -196,7 +195,7 @@ public class Board {
 			for(int j=0;j<BOARD_SIZE;j++)
 				board.board[i][j]=this.board[i][j];
 		
-		return null;
+		return board;
 		
 	}
 }

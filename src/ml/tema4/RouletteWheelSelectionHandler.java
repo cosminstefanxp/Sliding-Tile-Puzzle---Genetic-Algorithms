@@ -8,6 +8,7 @@
 package ml.tema4;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import ml.tema4.ga.Chromosome;
@@ -40,22 +41,26 @@ public class RouletteWheelSelectionHandler implements SelectionHandler {
 		for (Chromosome chrom : population)
 			if (chrom.getFitness() > maxValue)
 				maxValue = chrom.getFitness();
+		// Small probability even for the element with the worst fitness
+		maxValue+=1;
 		log.info("Max value: " + maxValue);
+		
 
 		// Prepare sums array
 		float fitnesses[] = new float[population.size()];
 		for (int i = 0; i < population.size(); i++) {
 			if (i == 0)
-				fitnesses[i] = 1 - population.get(i).getFitness() / maxValue;
+				fitnesses[i] = (maxValue - population.get(i).getFitness());
 			else
-				fitnesses[i] = fitnesses[i - 1] + 1 - population.get(i).getFitness() / maxValue;
+				fitnesses[i] = fitnesses[i - 1] + (maxValue - population.get(i).getFitness());
 		}
-		log.debug("Fitnesses: " + fitnesses);
+		if(log.isDebugEnabled())
+			log.debug("Fitnesses: " + Arrays.toString(fitnesses));
 
 		// Select a percent of the population
 		for (int i = 0; i < population.size() * SELECTION_RATIO; i++) {
 			// Pick a position
-			float nr = rand.nextFloat();
+			float nr = rand.nextFloat()*fitnesses[population.size()-1];
 			int pos = 0;
 
 			// Search for the number
@@ -65,14 +70,16 @@ public class RouletteWheelSelectionHandler implements SelectionHandler {
 				else if (j > 0 && nr > fitnesses[j - 1] && nr < fitnesses[j])
 					pos = j;
 			}
+			log.debug("Picked number "+nr+" on pos "+pos);
+			
 			// Add the chromosome to the selection, if not already there
 			if (!newPop.contains(population.get(pos)))
 				newPop.add(population.get(pos));
 			else
 				i--;
 		}
-		if(log.isDebugEnabled())
-			log.debug("Selected population:" + newPop);
+		if (log.isDebugEnabled())
+			log.debug("Selected population: " + newPop);
 
 		return newPop;
 	}

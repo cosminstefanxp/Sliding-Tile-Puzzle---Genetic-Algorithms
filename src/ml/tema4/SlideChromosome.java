@@ -9,18 +9,29 @@ package ml.tema4;
 
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 import ml.tema4.ga.Chromosome;
 
 /**
  * The Class SlideChromosome.
  */
 public class SlideChromosome extends Chromosome {
+	
+	/** The Constant MIN_CHROM_SIZE. */
+	public static final int MIN_CHROM_SIZE = 4;
+
+	/** The Constant MAX_CHROM_SIZE. */
+	public static final int MAX_CHROM_SIZE = 25;
 
 	/** The moves. */
 	public ArrayList<MoveElement> moves;
 
 	/** The board. */
 	public Board board;
+	
+	/** The log. */
+	private static Logger log = Logger.getLogger(SlideChromosome.class);
 
 	/* (non-Javadoc)
 	 * 
@@ -28,37 +39,47 @@ public class SlideChromosome extends Chromosome {
 	@Override
 	public void updateFitness() {
 
+		if(log.isInfoEnabled())
+			log.info("Updating fitness for chromosome: "+this);
 		Board newBoard = board.getCopy();
-
+		
 		// Do the moves
+		if(log.isDebugEnabled())
+			log.debug("Initial board: "+newBoard);
 		for (MoveElement move : moves)
 			newBoard.doMoveElement(move);
+		if(log.isDebugEnabled())
+			log.debug("Final board: "+newBoard);
 
 		/* Evaluate the board using 
 		 * - first misplaced element 
 		 * - blank element 
 		 * - count of misplaced elements 
 		 */
-		int misplaced = 0, firstMisplacedPos = 0, firstMisplaced = -1, blankPos=0;
+		int misplaced = 0, firstMisplacedPos = -1, firstMisplaced = -1, blankPos=0;
 		
 		for (int i = 0; i < Board.BOARD_SIZE; i++)
 			for (int j = 0; j < Board.BOARD_SIZE; j++) {
 				
 				int val = i * Board.BOARD_SIZE + j + 1;
 				
+				//Find the blank position
 				if (newBoard.board[i][j] == 0)
 				{
 					blankPos = val;
-					continue;
 				}
+				//If the value here is not corresponding
 				if (newBoard.board[i][j] != val) {
-					misplaced++;
+					if(newBoard.board[i][j] != 0)
+						misplaced++;
 					if (firstMisplaced == -1)
 						firstMisplaced = val;
 				}
 				if (newBoard.board[i][j] == firstMisplaced)
 					firstMisplacedPos = val;
 			}
+		log.debug("Computed values: (misplaced " + misplaced + "), (firstMisplaced " + firstMisplaced
+				+ "), (firstMisplacedPos " + firstMisplacedPos + "), (blank " + blankPos + ")");
 
 		// Compute the fitness
 		// Use count of misplaced elements
@@ -72,17 +93,19 @@ public class SlideChromosome extends Chromosome {
 			manhattanDiff += Math.abs((firstMisplaced - 1) % Board.BOARD_SIZE - (firstMisplacedPos - 1)
 					% Board.BOARD_SIZE);
 			fitness += 18 * manhattanDiff;
+			log.debug("First Misplaced Manhattan: "+manhattanDiff);
 		}
 		
 		// Use the Manhattan distance of the blank element to the first misplaced element
 		if(firstMisplaced!=-1)
 		{
 			int manhattanDiff = 0;
-			manhattanDiff += Math.abs((firstMisplaced - 1) / Board.BOARD_SIZE - (blankPos - 1)
+			manhattanDiff += Math.abs((firstMisplacedPos - 1) / Board.BOARD_SIZE - (blankPos - 1)
 					/ Board.BOARD_SIZE);
-			manhattanDiff += Math.abs((firstMisplaced - 1) % Board.BOARD_SIZE - (blankPos - 1)
+			manhattanDiff += Math.abs((firstMisplacedPos - 1) % Board.BOARD_SIZE - (blankPos - 1)
 					% Board.BOARD_SIZE);
 			fitness += manhattanDiff;
+			log.debug("First Misplaced to Blank Manhattan: "+manhattanDiff);
 		}
 		
 		log.info("Final fitness: "+this.fitness);
