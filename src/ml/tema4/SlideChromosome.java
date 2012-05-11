@@ -19,7 +19,7 @@ import ml.tema4.ga.Chromosome;
 public class SlideChromosome extends Chromosome {
 	
 	/** The Constant MIN_CHROM_SIZE. */
-	public static final int MIN_CHROM_SIZE = 4;
+	public static final int MIN_CHROM_SIZE = 1;
 
 	/** The Constant MAX_CHROM_SIZE. */
 	public static final int MAX_CHROM_SIZE = 25;
@@ -67,10 +67,15 @@ public class SlideChromosome extends Chromosome {
 				if (newBoard.board[i][j] == 0)
 				{
 					blankPos = val;
+					// If the blank position is not on it's final spot, it may be on the place of
+					// the first misplaced tile
+					if (firstMisplaced == -1 && val != Board.BOARD_SIZE * Board.BOARD_SIZE)
+						firstMisplaced = val;
+					continue;
 				}
 				//If the value here is not corresponding
 				if (newBoard.board[i][j] != val) {
-					if(newBoard.board[i][j] != 0)
+					//if(newBoard.board[i][j] != 0)
 						misplaced++;
 					if (firstMisplaced == -1)
 						firstMisplaced = val;

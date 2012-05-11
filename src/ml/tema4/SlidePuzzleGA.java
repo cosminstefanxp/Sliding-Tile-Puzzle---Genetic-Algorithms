@@ -35,10 +35,11 @@ public class SlidePuzzleGA extends GeneticAlgorithm {
 
 	/**
 	 * Instantiates a new slide puzzle genetic algorithm.
-	 * 
+	 *
 	 * @param selectionH the selection handler
 	 * @param mutationH the mutation handler
 	 * @param crossoverH the crossover handler
+	 * @param board the board
 	 */
 	public SlidePuzzleGA(SelectionHandler selectionH, MutationHandler mutationH, CrossoverHandler crossoverH,
 			Board board) {
@@ -109,6 +110,23 @@ public class SlidePuzzleGA extends GeneticAlgorithm {
 	@Override
 	protected void endGenerationCallback() {
 		log.warn("Generation ended. Best fitness: "+this.bestFitness);
+	}
+
+	/* (non-Javadoc)
+	 * @see ml.tema4.ga.GeneticAlgorithm#resetEnvironment(ml.tema4.ga.Chromosome)
+	 */
+	@Override
+	protected void resetEnvironment(Chromosome bestChromosome) {
+		log.warn("Resetting population based on the best chromosome: "+bestChromosome);
+		
+		//Update the board according to the moves in the best chromosome
+		SlideChromosome chrom=(SlideChromosome)bestChromosome;
+		for(MoveElement move:chrom.moves)
+			board.doMoveElement(move);
+		
+		population=generate(POPULATION_SIZE);
+		for (Chromosome chromos : population)
+			chromos.updateFitness();
 	}
 
 }

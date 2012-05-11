@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 public class Board {
 
 	/** The Constant BOARD_SIZE. */
-	public static final int BOARD_SIZE = 3;
+	public static final int BOARD_SIZE = 4;
 
 	/** The Constant BOARD_MAX_ELEMENT. */
 	public static final int BOARD_MAX_ELEMENT = BOARD_SIZE * BOARD_SIZE;

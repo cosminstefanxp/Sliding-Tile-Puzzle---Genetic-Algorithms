@@ -10,10 +10,6 @@ package ml.tema4.ga;
 import java.util.ArrayList;
 import java.util.Random;
 
-import ml.tema4.MoveElement;
-import ml.tema4.SlideChromosome;
-
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
@@ -23,6 +19,9 @@ public abstract class GeneticAlgorithm {
 
 	/** The Constant POPULATION_SIZE. */
 	public static final int POPULATION_SIZE = 100;
+
+	/** The Constant ENVIRONMENT_RESET_GENERATION_COUNT. */
+	public static final int ENVIRONMENT_RESET_GENERATION_COUNT = 100;
 
 	/**
 	 * The Status of the Genetic Algorithm.
@@ -83,6 +82,13 @@ public abstract class GeneticAlgorithm {
 	 * This method is called at the end of each generation.
 	 */
 	protected abstract void endGenerationCallback();
+	
+	/**
+	 * Reset environment.
+	 *
+	 * @param bestChromosome the best chromosome
+	 */
+	protected abstract void resetEnvironment(Chromosome bestChromosome);
 
 	/**
 	 * Instantiates a new genetic algorithm.
@@ -113,10 +119,18 @@ public abstract class GeneticAlgorithm {
 			chrom.updateFitness();
 
 		float lastBestFitness = -1;
+		int generationsConstFitness=0;
 		Status status = null;
-		// int generations
+		Chromosome bestChrom = null;
 		while ((status = stopCondition()) == Status.PROCESSING) {
 			this.beginGenerationCallback();
+			
+			//If the best fitness is constant for a long period of time, reset the environment
+			if(generationsConstFitness>ENVIRONMENT_RESET_GENERATION_COUNT)
+			{
+				resetEnvironment(bestChrom);
+				generationsConstFitness=0;
+			}
 
 			// Select subpopulation
 			ArrayList<Chromosome> subPop = selectionH.select(population);
@@ -126,13 +140,18 @@ public abstract class GeneticAlgorithm {
 
 			// Compute best fitness
 			bestFitness = Float.MAX_VALUE;
-			Chromosome bestChrom = null;
 			for (Chromosome chrom : population) {
 				if (bestFitness > chrom.getFitness()) {
 					bestFitness = chrom.getFitness();
 					bestChrom = chrom;
 				}
 			}
+			//Update fitness computations
+			if(bestFitness==lastBestFitness)
+				generationsConstFitness++;
+			else
+				generationsConstFitness=0;
+			lastBestFitness=bestFitness;
 
 			// Introduce best chromosome in new population - elitism
 			newPop.add(bestChrom);
@@ -141,8 +160,7 @@ public abstract class GeneticAlgorithm {
 			bestChrom = bestChrom.getCopy();
 			mutationH.mutate(bestChrom);
 			if (!newPop.contains(bestChrom))
-				;
-			newPop.add(bestChrom);
+				newPop.add(bestChrom);
 
 			// Add new chromosomes
 			while (newPop.size() < POPULATION_SIZE) {
@@ -164,21 +182,24 @@ public abstract class GeneticAlgorithm {
 					newPop.add(chrom2);
 			}
 
-			// if (bestFitness == 91.0f) {
-			// SlideChromosome chrRes = (SlideChromosome) bestChrom;
-			// Logger.getRootLogger().setLevel(Level.DEBUG);
-			// // for(MoveElement move:chrRes.moves)
-			// // chrRes.board.doMoveElement(move);
-			// log.warn(chrRes.board);
-			// chrRes.updateFitness();
-			// Logger.getRootLogger().setLevel(Level.WARN);
-			//
-			// }
+//			if (bestFitness == 92.0f) {
+//				SlideChromosome chrRes = (SlideChromosome) bestChrom;
+//				Logger.getRootLogger().setLevel(Level.DEBUG);
+//				// for(MoveElement move:chrRes.moves)
+//				// chrRes.board.doMoveElement(move);
+//				log.warn(chrRes.board);
+//				chrRes.updateFitness();
+//				Logger.getRootLogger().setLevel(Level.WARN);
+//
+//			}
+
 
 			// Update the population
 			population = newPop;
 			for (Chromosome chrom : population)
 				chrom.updateFitness();
+					
+					
 			this.endGenerationCallback();
 		}
 
