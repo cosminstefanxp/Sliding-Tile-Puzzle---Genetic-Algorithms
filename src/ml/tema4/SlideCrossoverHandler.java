@@ -8,14 +8,14 @@ import org.apache.log4j.Logger;
 import ml.tema4.ga.Chromosome;
 import ml.tema4.ga.CrossoverHandler;
 
-public class SimpleCrossoverHandler implements CrossoverHandler {
+public class SlideCrossoverHandler implements CrossoverHandler {
 	public float CROSSOVER_RATE;
 
-	private static Logger log = Logger.getLogger(SlideMutationHandler.class);
+	private static Logger log = Logger.getLogger(SlideCrossoverHandler.class);
 
 	private static final Random rand = new Random();
 
-	public SimpleCrossoverHandler(float crossoverRate) {
+	public SlideCrossoverHandler(float crossoverRate) {
 		CROSSOVER_RATE = crossoverRate;
 	}
 	@Override
@@ -59,8 +59,6 @@ public class SimpleCrossoverHandler implements CrossoverHandler {
 		}
 		if (log.isEnabledFor(Level.DEBUG))
 			log.debug("Crossover successfull with results: \n\t" + slideChrom1 + " and \n\t"+slideChrom2);
-		
-
 	}
 
 }

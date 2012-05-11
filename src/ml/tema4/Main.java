@@ -11,6 +11,7 @@ import ml.tema4.ga.CrossoverHandler;
 import ml.tema4.ga.GeneticAlgorithm;
 import ml.tema4.ga.GeneticAlgorithm.Status;
 import ml.tema4.ga.MutationHandler;
+import ml.tema4.ga.SelectionHandler;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
@@ -41,8 +42,9 @@ public class Main {
 		board.initRandom();
 		
 		MutationHandler mh=new SlideMutationHandler(0.6f);
-		CrossoverHandler ch=new SimpleCrossoverHandler(0.2f);
-		GeneticAlgorithm algorithm=new SlidePuzzleGA(null, mh, ch, board);
+		CrossoverHandler ch=new SlideCrossoverHandler(0.2f);
+		SelectionHandler sh=new RouletteWheelSelectionHandler(0.5f);
+		GeneticAlgorithm algorithm=new SlidePuzzleGA(sh, mh, ch, board);
 		Status status=algorithm.run();
 		log.info("Algorithm finished with status: "+status);
 			

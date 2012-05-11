@@ -183,4 +183,20 @@ public class Board {
 		}
 	}
 
+	/**
+	 * Gets a copy of the board.
+	 *
+	 * @return the copy
+	 */
+	public Board getCopy()
+	{
+		Board board=new Board();
+		
+		for(int i=0;i<BOARD_SIZE;i++)
+			for(int j=0;j<BOARD_SIZE;j++)
+				board.board[i][j]=this.board[i][j];
+		
+		return null;
+		
+	}
 }

@@ -13,7 +13,7 @@ package ml.tema4.ga;
 public abstract class Chromosome {
 
 	/** The fitness. */
-	private float fitness;
+	protected float fitness;
 	
 	/**
 	 * Updates the fitness of the chromosome.
