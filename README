@@ -1,0 +1,53 @@
+Invatare Automata
+Tema Semestru - Tema 4
+
+Stefan-Dobrin Cosmin
+342C4
+
+
+Mentiuni generale
+=================
+Tema a fost implementata in Java, folosind ca IDE (pentru dezvoltare si pentru rulare) Eclipse. In dezvoltare pe langa librariile default din cadrul Java 1.7, am folosit log4j pentru a imi usura dezvoltarea pe partea de logging. Nivelul de logging curent poate fi setat in Main -> configureLogger.
+
+De asemenea, tema este insotita de un script ant de compilare si rulare. Se pot folosi targeturile build si run.
+
+Pentru configurarea usoara a parametrilor corespunzatori algoritmilor genetici, se poate folosi clasa Config.
+
+Mentiuni Implementare
+=====================
+Voi mentiona cele mai importante aspecte din algoritmul folosit in cadrul temei:
+ * In primul rand, trebuie sa mentionez ca am folosit ca referinta pentru implementare lucrarea: "Ting Qian. Using Genetic Algorithm to Solve Sliding Tile Puzzles." Din aceasta, dupa teste corespunzatoare, am folosit doua optimizari (evolutia mediului si mutari pre-calculate), descrise mai jos.
+ 
+ * Ca structura si mod de implementare a aplicatiei, aceasta a fost implementata intr-un mod general si abstract, algoritmul genetic putand fi folosit si in alte situatii sau cu alte metode de crossover, mutatie, selectie etc.
+ * Pentru a implementarea sa fie cat mai generala, am folosit o structura bazata pe interfete si clase abstracte, implementate/extinse apoi pentru cazul particular al temei:
+ 	o GeneticAlgorithm - Clasa abstracta generala. Implementarea pentru cazul curent se gaseste in SlidePuzzleGA.
+ 	o Chromosome - Clasa abstracta pentru cromozomi. Implementarea se gaseste in SlideChromosome. Cromozomii sunt de dimensiuni varibili
+ 	o CrossoverHandler,  MutationHandler - Interfete pentru implementarea metodelor de crossover si mutatie. Implementarile se gasesc in clasele analoage de forma Slide*Handler
+ 	o SelectionHandler - Interfata pentru metoda de selectie. Implementarea se gaseste in RouletteWheelSelection.
+ 		- prin aceasta abstractizare, modificarea oricarei metode de selectie, crossover, mutatie, etc se face doar prin implementarea interfetei corespunzatoare.
+ 		
+ * Referitor la algoritm, acesta este unul clasic de algoritmi genetici cu urmatoarele modificari:
+ 	o Cromozomii - retin mutarile ce trebuie facute. Dimensiune variabila. Ce trebuie mentionat este faptul ca am folosit grupuri de mutari deja calculate (MoveElements), care, asa cum este demonstrat de Ting Qian, au rezultate mai bune in practica. Aceste grupuri de mutari sunt indivizibile. Prin testele facute am observat rezultate mai bune folosind aceste grupuri de mutari.
+ 	o Selectia - Este de tip RouletteWheel clasic
+ 	o Crossover - crossoverul este de tip clasic, interschimband componente ale	cromozomilor. Tinut cont de dimensiunea variabila a acestora.
+ 	o Mutatia - cromozomii fiind de dimensiune variabila, operatorul de mutatie permite trei variante: modificarea, stergerea sau inserarea unui element de mutare (MoveElement) din/in cromozom.
+	o In algoritmul genetic, la fiecare pas calculez cel mai bun fitness. Daca acesta ramane constant pentru un numar de generatii (setabil in Config), se considera ca sistemul a ajuns intr-un minim local. In acest caz, aplic mutarile corespunzatoare celui mai bun cromozom asupra tablei curente (mediului) si creez o noua populatie care pleaca de la aceasta noua tabla (noul mediu). Metoda este preluata din lucrarea mentionata mai sus.
+	o Valorile pentru variabilele corespunzatoare au fost obtinute empiric, prin diverse teste. 
+ * La inceputul fiecarei rulari, se genereaza o tabla de joc noua, valida, folosita pentru testare.  	
+
+ * Pentru evaluare, in clasa Main am creat doua metode (plot1 si plot2), care realizeaza scripturile octave de afisare a cele doua tipuri de grafice din fisierul auxiliar (Grafice.pdf). Mai multe detalii se gasesc in acest document.
+ * Graficele au fost realizate pentru versiunea de 3x3 a Puzzle-ului, pentru ca durata de executie in cazul tablelor de dimensiuni mai mari poate fi destul de mare uneori. Fiecare plotting implica rularea de cel putin 400 de ori a algoritmului.
+
+Implementari BONUS
+==================
+In cadrul acestei teme am realizat multiple implementari de tip bonus:
+	o implementare eficienta folosind diverse optimizari
+	o algoritmul functioneaza pe table de orice dimensiuni (setabil in Config)
+	o implementarea este abstractizata si generalizata la un nivel inalt
+	o am implementat generarea de scripturi de "plotting" octave direct in aplicatie
+ 
+Alte mentiuni
+============
+Pentru orice alte nedumeriri legate de algoritmul folosit, se pot folosi comentariile din aplicatie, avand asociata chiar si documentatie JavaDoc pentru obiecte/metode. 
+ 		
+  

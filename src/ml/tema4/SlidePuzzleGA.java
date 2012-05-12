@@ -8,6 +8,7 @@
 package ml.tema4;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import ml.tema4.ga.Chromosome;
@@ -26,6 +27,9 @@ public class SlidePuzzleGA extends GeneticAlgorithm {
 
 	/** The board. */
 	Board board;
+
+	/** The start board. */
+	Board startBoard;
 
 	/** The rand. */
 	Random rand = new Random();
@@ -47,6 +51,7 @@ public class SlidePuzzleGA extends GeneticAlgorithm {
 			Board board) {
 		super(selectionH, mutationH, crossoverH);
 		this.board = board;
+		this.startBoard = board.getCopy();
 		this.globalMoves = new ArrayList<MoveElement>();
 	}
 
@@ -89,7 +94,7 @@ public class SlidePuzzleGA extends GeneticAlgorithm {
 		// If any of the chromosomes is a solution (i.e. the fitness equals 0)
 		for (Chromosome chrom : population)
 			if (chrom.getFitness() == 0) {
-				SlideChromosome sChrom=(SlideChromosome)chrom;
+				SlideChromosome sChrom = (SlideChromosome) chrom;
 				globalMoves.addAll(sChrom.moves);
 				log.warn("Solution found in generation " + generation + ": " + globalMoves);
 				return Status.SUCCESSFULL;
@@ -138,13 +143,27 @@ public class SlidePuzzleGA extends GeneticAlgorithm {
 
 	@Override
 	protected void algorithmCompleteCallBack(Status status) {
-		//Print the solution
-		System.out.println("A solution was found in "+generation+" generations: ");
-		StringBuffer out=new StringBuffer();
-		for(MoveElement move:globalMoves)
-			for(Step step:move.steps)
-				out.append(step+", ");
-		System.out.println(out.toString());
+
+		if (Config.PRINTING) {
+			// Print the solution
+			System.out.println("A solution was found in " + generation + " generations: ");
+			StringBuffer out = new StringBuffer();
+			for (MoveElement move : globalMoves)
+				for (Step step : move.steps)
+					out.append(step + ", ");
+			System.out.println(out.toString());
+
+			// Make and print the moves
+			System.out.println(startBoard);
+			for (MoveElement move : globalMoves) {
+				System.out.println("Making moves: " + Arrays.toString(move.steps));
+				startBoard.doMoveElement(move);
+				System.out.println(startBoard);
+			}
+		}
+		
+		// Hack for evaluation
+		Main.finishedGenerationsCount=generation;
 	}
 
 }

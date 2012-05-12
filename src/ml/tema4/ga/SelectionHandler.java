@@ -9,7 +9,16 @@ package ml.tema4.ga;
 
 import java.util.ArrayList;
 
+/**
+ * The Interface SelectionHandler.
+ */
 public interface SelectionHandler {
 
+	/**
+	 * Select.
+	 *
+	 * @param chromos the chromos
+	 * @return the array list
+	 */
 	public ArrayList<Chromosome> select(ArrayList<Chromosome> chromos);
 }
